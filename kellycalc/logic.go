@@ -32,6 +32,7 @@ func BCalc(s string) (float64, error) {
 }
 
 func Fcalc(P, B float64) float64 {
+	P = P / 100
 	Q := 1 - P
 	F := P - (Q / B)
 	return F
