@@ -37,3 +37,9 @@ func Fcalc(P, B float64) float64 {
 	F := P - (Q / B)
 	return F
 }
+
+func withBal(Bal, F float64) float64 {
+
+	use := F * Bal
+	return use
+}
