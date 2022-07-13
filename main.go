@@ -23,6 +23,7 @@ func uiBase() fyne.CanvasObject {
 	}
 
 	winEnt := widget.NewEntry()
+
 	winBind := binding.NewString()
 	winEnt.OnChanged = func(s string) {
 		winBind.Set(s)
@@ -37,13 +38,12 @@ func uiBase() fyne.CanvasObject {
 		oddsEnt.Bind(oddsBind)
 	}
 
-	lossEntry := widget.NewLabel("0%")
 	box := container.NewVBox()
 
 	form := widget.NewForm(
 		widget.NewFormItem("Currren Balance", BalEnt),
 		widget.NewFormItem("Win percentage", winEnt),
-		widget.NewFormItem("Loss Percentage", lossEntry),
+
 		widget.NewFormItem("Odds offered", oddsEnt),
 	)
 
@@ -54,13 +54,26 @@ func uiBase() fyne.CanvasObject {
 
 		PStr, _ := winBind.Get()
 		BStr, _ := oddsBind.Get()
+		bal, _ := BalBind.Get()
+
 		P, _ := kellycalc.PCalc(PStr)
 		B, _ := kellycalc.BCalc(BStr)
 		f := kellycalc.Fcalc(P, B)
+		balance, _ := kellycalc.BalCalc(bal)
 
-		fBind := binding.BindFloat(&f)
-		fStr := binding.FloatToString(fBind)
+		//Ran out of names
+		use := kellycalc.WithBal(balance, f)
+		fBind := binding.BindFloat(&use)
+		fStr := binding.FloatToStringWithFormat(fBind, "Value is: %0.2f")
 		disp := widget.NewLabelWithData(fStr)
+		for _, obj := range box.Objects {
+
+			if obj == submitButn {
+				continue
+			}
+			box.Remove(obj)
+
+		}
 		box.Add(disp)
 
 	}
@@ -72,6 +85,7 @@ func uiBase() fyne.CanvasObject {
 func main() {
 	app := app.New()
 	wind := app.NewWindow("Kelly Calculator")
+	wind.Resize(fyne.NewSize(400, 400))
 
 	wind.SetContent(uiBase())
 	wind.ShowAndRun()
